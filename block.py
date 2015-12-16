@@ -1,6 +1,7 @@
 import struct, datetime
 
 
+# Utility Functions for parsing. We open the file in binary format and read. all accept a generic file or stream object that has a read function
 def read_uint1(stream):
     return ord(stream.read(1))
 
@@ -54,12 +55,12 @@ class BlockHeader(object):
 
     def __init__(self):
         super(BlockHeader, self).__init__()
-        self.version = None
-        self.prevhash = None
-        self.merklehash = None
-        self.time = None
-        self.bits = None
-        self.nonce = None
+        self.version = None  # block version number, upgrade the software
+        self.prevhash = None  # 256bit hash of the previous block header, updated when a new block comes in
+        self.merklehash = None  # 256bit hash based on all transactions in the block, updated when the transaction is accepted
+        self.time = None  # current timestamp as seconds (UTC), every few seconds
+        self.bits = None  # current target in compact format, updated when difficulty is adjusted
+        self.nonce = None  #32bit number (starts at 0), updated when a hash is tried(increments)
 
     def parse(self, stream):
         # TODO: error checking
@@ -89,12 +90,12 @@ class Tx_Input(object):
         super(Tx_Input, self).__init__()
 
     def parse(self, stream):
-        self.prevhash = read_hash32(stream)
-        self.prevtx_out_idx = read_uint4(stream)
+        self.prevhash = read_hash32(stream)  # previous transaction
+        self.prevtx_out_idx = read_uint4(stream)  #index in the list of outputs of the previous transaction
         self.txin_script_len = read_varint(stream)
         # TODO in later modules we will convert scriptSig to its own class
         self.scriptSig = stream.read(self.txin_script_len)
-        self.sequence_no = read_uint4(stream)
+        self.sequence_no = read_uint4(stream)  #sequence number
 
     def __str__(self):
         return 'PrevHash: %s \nPrev Tx out index: %d \nTxin Script Len: %d \nscriptSig: %s \nSequence: %8x' % \
@@ -129,7 +130,8 @@ class Tx_Output(object):
 
 
 class Transaction(object):
-    """Holds one Transaction as part of a block"""
+    # Holds one Transaction as part of a block
+    #Uses Input and Output to build transaction
 
     def __init__(self):
         super(Transaction, self).__init__()
@@ -166,8 +168,7 @@ class Transaction(object):
 
 
 class Block(object):
-    """A block to be parsed from file"""
-
+    #A block to be parsed from file
     def __init__(self):
         self.magic_no = -1
         self.blocksize = 0
@@ -177,21 +178,21 @@ class Block(object):
         blockfile = None
         print(transaction_cnt)
 
-    def parseBlockFile(self, blockfile):
-        print 'Parsing block file: %s\n' % blockfile
-        with open(blockfile, 'rb') as bf:
-            self.magic_no = read_uint4(bf)
-            print 'magic_no:\t0x%8x' % self.magic_no
+    def parseBlockFile(self, blockfile):  # takes the block file_name, parses and prints it
+        print 'Parsing block file: %s\n' % blockfile  # idenitify which block we are parsing
+        with open(blockfile, 'rb') as bf:  # open the file as binary
+            self.magic_no = read_uint4(bf)  # pass to utility function
+            print 'magic_no:\t0x%8x' % self.magic_no  #print the magic number
 
             self.blocksize = read_uint4(bf)
             print 'size:    \t%u bytes' % self.blocksize
 
-            self.blockheader = BlockHeader()
-            self.blockheader.parse(bf)
+            self.blockheader = BlockHeader()  # instantiate block header
+            self.blockheader.parse(bf) #parse block header
             print 'Block header:\t%s' % self.blockheader
 
-            self.transaction_cnt = read_varint(bf)
-            print 'Transactions: \t%d' % self.transaction_cnt
+            self.transaction_cnt = read_varint(bf)  # read the transaction count
+            print 'Transactions: \t%d' % self.transaction_cnt  #print the transaction count
 
             self.transactions = []
 
