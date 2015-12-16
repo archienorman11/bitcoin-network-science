@@ -1,5 +1,6 @@
 import struct, datetime
 
+count = 0
 
 # Utility Functions for parsing. We open the file in binary format and read. all accept a generic file or stream object that has a read function
 def read_uint1(stream):
@@ -188,7 +189,7 @@ class Block(object):
 
             self.blockheader = BlockHeader()  # instantiate block header
             self.blockheader.parse(bf) #parse block header
-            print 'Block header:\t%s' % self.blockheader
+            # print 'Block header:\t%s' % self.blockheader
 
             self.transaction_cnt = read_varint(bf)  # read the transaction count
             print 'Transactions: \t%d' % self.transaction_cnt  #print the transaction count
@@ -200,6 +201,7 @@ class Block(object):
                 tx = Transaction()
                 tx.parse(bf)
                 self.transactions.append(tx)
+                count = count + 1
                 print '=' * 50
                 print ' TX NUMBER: %d' % (i + 1)
                 print '=' * 50
@@ -215,9 +217,9 @@ def parseBlockFile(blockfile):
 if __name__ == "__main__":
     import os  # Open a file
 
-    path = "/Users/archienorman/PycharmProjects/bitcoin-network-science/data/"
+    path = "/Users/archienorman/Library/Application Support/Bitcoin/blocks/"  #test path /Users/archienorman/PycharmProjects/bitcoin-network-science/data/
     dirs = os.listdir(path)
-    # This would print all the files and directories
     for file in dirs:
         print file
         parseBlockFile(path + file)  # pass each file
+    print(count)
