@@ -49,7 +49,6 @@ def read_varint(stream):
 def get_hexstring(bytebuffer):
     return ''.join(('%x' % ord(a)) for a in bytebuffer)
 
-
 class BlockHeader(object):
     """BlockHeader represents the header of the block"""
 
