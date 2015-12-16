@@ -54,7 +54,11 @@ coverage.xml
 docs/_build/
 
 # PyBuilder
+<<<<<<< HEAD
 target
 
 
 /data/
+=======
+target/
+>>>>>>> origin/master
