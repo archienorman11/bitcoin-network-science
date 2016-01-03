@@ -217,7 +217,7 @@ def parseBlockFile(blockfile):
 if __name__ == "__main__":
     import os  # Open a file
 
-    path = "/Users/archienorman/Library/Application Support/Bitcoin/blocks/"  #test path /Users/archienorman/PycharmProjects/bitcoin-network-science/data/
+    path = "/Volumes/admin@151.228.26.218/archienorman/Block Chain/Block Chain Torrent/blocks/"  #test path /Users/archienorman/PycharmProjects/bitcoin-network-science/data/
     dirs = os.listdir(path)
     for file in dirs:
         print file
